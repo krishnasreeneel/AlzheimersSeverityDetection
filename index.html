@@ -1,768 +1,768 @@
 <html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>Alzheimers Severity Detection </title><style>
-    /* cspell:disable-file */
-    /* webkit printing magic: print all background colors */
-    html {
-        -webkit-print-color-adjust: exact;
-    }
-    * {
-        box-sizing: border-box;
-        -webkit-print-color-adjust: exact;
-    }
-    
-    html,
-    body {
-        margin: 0;
-        padding: 0;
-    }
-    @media only screen {
-        body {
-            margin: 2em auto;
-            max-width: 900px;
-            color: rgb(55, 53, 47);
-        }
-    }
-    
-    body {
-        line-height: 1.5;
-        white-space: pre-wrap;
-    }
-    
-    a,
-    a.visited {
-        color: inherit;
-        text-decoration: underline;
-    }
-    
-    .pdf-relative-link-path {
-        font-size: 80%;
-        color: #444;
-    }
-    
-    h1,
-    h2,
-    h3 {
-        letter-spacing: -0.01em;
-        line-height: 1.2;
-        font-weight: 600;
-        margin-bottom: 0;
-    }
-    
-    .page-title {
-        font-size: 2.5rem;
-        font-weight: 700;
-        margin-top: 0;
-        margin-bottom: 0.75em;
-    }
-    
-    h1 {
-        font-size: 1.875rem;
-        margin-top: 1.875rem;
-    }
-    
-    h2 {
-        font-size: 1.5rem;
-        margin-top: 1.5rem;
-    }
-    
-    h3 {
-        font-size: 1.25rem;
-        margin-top: 1.25rem;
-    }
-    
-    .source {
-        border: 1px solid #ddd;
-        border-radius: 3px;
-        padding: 1.5em;
-        word-break: break-all;
-    }
-    
-    .callout {
-        border-radius: 3px;
-        padding: 1rem;
-    }
-    
-    figure {
-        margin: 1.25em 0;
-        page-break-inside: avoid;
-    }
-    
-    figcaption {
-        opacity: 0.5;
-        font-size: 85%;
-        margin-top: 0.5em;
-    }
-    
-    mark {
-        background-color: transparent;
-    }
-    
-    .indented {
-        padding-left: 1.5em;
-    }
-    
-    hr {
-        background: transparent;
-        display: block;
-        width: 100%;
-        height: 1px;
-        visibility: visible;
-        border: none;
-        border-bottom: 1px solid rgba(55, 53, 47, 0.09);
-    }
-    
-    img {
-        max-width: 100%;
-    }
-    
-    @media only print {
-        img {
-            max-height: 100vh;
-            object-fit: contain;
-        }
-    }
-    
-    @page {
-        margin: 1in;
-    }
-    
-    .collection-content {
-        font-size: 0.875rem;
-    }
-    
-    .column-list {
-        display: flex;
-        justify-content: space-between;
-    }
-    
-    .column {
-        padding: 0 1em;
-    }
-    
-    .column:first-child {
-        padding-left: 0;
-    }
-    
-    .column:last-child {
-        padding-right: 0;
-    }
-    
-    .table_of_contents-item {
-        display: block;
-        font-size: 0.875rem;
-        line-height: 1.3;
-        padding: 0.125rem;
-    }
-    
-    .table_of_contents-indent-1 {
-        margin-left: 1.5rem;
-    }
-    
-    .table_of_contents-indent-2 {
-        margin-left: 3rem;
-    }
-    
-    .table_of_contents-indent-3 {
-        margin-left: 4.5rem;
-    }
-    
-    .table_of_contents-link {
-        text-decoration: none;
-        opacity: 0.7;
-        border-bottom: 1px solid rgba(55, 53, 47, 0.18);
-    }
-    
-    table,
-    th,
-    td {
-        border: 1px solid rgba(55, 53, 47, 0.09);
-        border-collapse: collapse;
-    }
-    
-    table {
-        border-left: none;
-        border-right: none;
-    }
-    
-    th,
-    td {
-        font-weight: normal;
-        padding: 0.25em 0.5em;
-        line-height: 1.5;
-        min-height: 1.5em;
-        text-align: left;
-    }
-    
-    th {
-        color: rgba(55, 53, 47, 0.6);
-    }
-    
-    ol,
-    ul {
-        margin: 0;
-        margin-block-start: 0.6em;
-        margin-block-end: 0.6em;
-    }
-    
-    li > ol:first-child,
-    li > ul:first-child {
-        margin-block-start: 0.6em;
-    }
-    
-    ul > li {
-        list-style: disc;
-    }
-    
-    ul.to-do-list {
-        padding-inline-start: 0;
-    }
-    
-    ul.to-do-list > li {
-        list-style: none;
-    }
-    
-    .to-do-children-checked {
-        text-decoration: line-through;
-        opacity: 0.375;
-    }
-    
-    ul.toggle > li {
-        list-style: none;
-    }
-    
-    ul {
-        padding-inline-start: 1.7em;
-    }
-    
-    ul > li {
-        padding-left: 0.1em;
-    }
-    
-    ol {
-        padding-inline-start: 1.6em;
-    }
-    
-    ol > li {
-        padding-left: 0.2em;
-    }
-    
-    .mono ol {
-        padding-inline-start: 2em;
-    }
-    
-    .mono ol > li {
-        text-indent: -0.4em;
-    }
-    
-    .toggle {
-        padding-inline-start: 0em;
-        list-style-type: none;
-    }
-    
-    /* Indent toggle children */
-    .toggle > li > details {
-        padding-left: 1.7em;
-    }
-    
-    .toggle > li > details > summary {
-        margin-left: -1.1em;
-    }
-    
-    .selected-value {
-        display: inline-block;
-        padding: 0 0.5em;
-        background: rgba(206, 205, 202, 0.5);
-        border-radius: 3px;
-        margin-right: 0.5em;
-        margin-top: 0.3em;
-        margin-bottom: 0.3em;
-        white-space: nowrap;
-    }
-    
-    .collection-title {
-        display: inline-block;
-        margin-right: 1em;
-    }
-    
-    .page-description {
-        margin-bottom: 2em;
-    }
-    
-    .simple-table {
-        margin-top: 1em;
-        font-size: 0.875rem;
-        empty-cells: show;
-    }
-    .simple-table td {
-        height: 29px;
-        min-width: 120px;
-    }
-    
-    .simple-table th {
-        height: 29px;
-        min-width: 120px;
-    }
-    
-    .simple-table-header-color {
-        background: rgb(247, 246, 243);
-        color: black;
-    }
-    .simple-table-header {
-        font-weight: 500;
-    }
-    
-    time {
-        opacity: 0.5;
-    }
-    
-    .icon {
-        display: inline-block;
-        max-width: 1.2em;
-        max-height: 1.2em;
-        text-decoration: none;
-        vertical-align: text-bottom;
-        margin-right: 0.5em;
-    }
-    
-    img.icon {
-        border-radius: 3px;
-    }
-    
-    .user-icon {
-        width: 1.5em;
-        height: 1.5em;
-        border-radius: 100%;
-        margin-right: 0.5rem;
-    }
-    
-    .user-icon-inner {
-        font-size: 0.8em;
-    }
-    
-    .text-icon {
-        border: 1px solid #000;
-        text-align: center;
-    }
-    
-    .page-cover-image {
-        display: block;
-        object-fit: cover;
-        width: 100%;
-        max-height: 30vh;
-    }
-    
-    .page-header-icon {
-        font-size: 3rem;
-        margin-bottom: 1rem;
-    }
-    
-    .page-header-icon-with-cover {
-        margin-top: -0.72em;
-        margin-left: 0.07em;
-    }
-    
-    .page-header-icon img {
-        border-radius: 3px;
-    }
-    
-    .link-to-page {
-        margin: 1em 0;
-        padding: 0;
-        border: none;
-        font-weight: 500;
-    }
-    
-    p > .user {
-        opacity: 0.5;
-    }
-    
-    td > .user,
-    td > time {
-        white-space: nowrap;
-    }
-    
-    input[type="checkbox"] {
-        transform: scale(1.5);
-        margin-right: 0.6em;
-        vertical-align: middle;
-    }
-    
-    p {
-        margin-top: 0.5em;
-        margin-bottom: 0.5em;
-    }
-    
-    .image {
-        border: none;
-        margin: 1.5em 0;
-        padding: 0;
-        border-radius: 0;
-        text-align: center;
-    }
-    
-    .code,
-    code {
-        background: rgba(135, 131, 120, 0.15);
-        border-radius: 3px;
-        padding: 0.2em 0.4em;
-        border-radius: 3px;
-        font-size: 85%;
-        tab-size: 2;
-    }
-    
-    code {
-        color: #eb5757;
-    }
-    
-    .code {
-        padding: 1.5em 1em;
-    }
-    
-    .code-wrap {
-        white-space: pre-wrap;
-        word-break: break-all;
-    }
-    
-    .code > code {
-        background: none;
-        padding: 0;
-        font-size: 100%;
-        color: inherit;
-    }
-    
-    blockquote {
-        font-size: 1.25em;
-        margin: 1em 0;
-        padding-left: 1em;
-        border-left: 3px solid rgb(55, 53, 47);
-    }
-    
-    .bookmark {
-        text-decoration: none;
-        max-height: 8em;
-        padding: 0;
-        display: flex;
-        width: 100%;
-        align-items: stretch;
-    }
-    
-    .bookmark-title {
-        font-size: 0.85em;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        height: 1.75em;
-        white-space: nowrap;
-    }
-    
-    .bookmark-text {
-        display: flex;
-        flex-direction: column;
-    }
-    
-    .bookmark-info {
-        flex: 4 1 180px;
-        padding: 12px 14px 14px;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-    }
-    
-    .bookmark-image {
-        width: 33%;
-        flex: 1 1 180px;
-        display: block;
-        position: relative;
-        object-fit: cover;
-        border-radius: 1px;
-    }
-    
-    .bookmark-description {
-        color: rgba(55, 53, 47, 0.6);
-        font-size: 0.75em;
-        overflow: hidden;
-        max-height: 4.5em;
-        word-break: break-word;
-    }
-    
-    .bookmark-href {
-        font-size: 0.75em;
-        margin-top: 0.25em;
-    }
-    
-    .sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
-    .code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
-    .serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
-    .mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
-    .pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
-    .pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
-    .pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
-    .pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
-    .pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
-    .pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
-    .pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
-    .pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
-    .pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
-    .pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
-    .pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
-    .pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
-    .pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
-    .pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
-    .pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
-    .pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
-    .highlight-default {
-        color: rgba(55, 53, 47, 1);
-    }
-    .highlight-gray {
-        color: rgba(120, 119, 116, 1);
-        fill: rgba(120, 119, 116, 1);
-    }
-    .highlight-brown {
-        color: rgba(159, 107, 83, 1);
-        fill: rgba(159, 107, 83, 1);
-    }
-    .highlight-orange {
-        color: rgba(217, 115, 13, 1);
-        fill: rgba(217, 115, 13, 1);
-    }
-    .highlight-yellow {
-        color: rgba(203, 145, 47, 1);
-        fill: rgba(203, 145, 47, 1);
-    }
-    .highlight-teal {
-        color: rgba(68, 131, 97, 1);
-        fill: rgba(68, 131, 97, 1);
-    }
-    .highlight-blue {
-        color: rgba(51, 126, 169, 1);
-        fill: rgba(51, 126, 169, 1);
-    }
-    .highlight-purple {
-        color: rgba(144, 101, 176, 1);
-        fill: rgba(144, 101, 176, 1);
-    }
-    .highlight-pink {
-        color: rgba(193, 76, 138, 1);
-        fill: rgba(193, 76, 138, 1);
-    }
-    .highlight-red {
-        color: rgba(212, 76, 71, 1);
-        fill: rgba(212, 76, 71, 1);
-    }
-    .highlight-gray_background {
-        background: rgba(241, 241, 239, 1);
-    }
-    .highlight-brown_background {
-        background: rgba(244, 238, 238, 1);
-    }
-    .highlight-orange_background {
-        background: rgba(251, 236, 221, 1);
-    }
-    .highlight-yellow_background {
-        background: rgba(251, 243, 219, 1);
-    }
-    .highlight-teal_background {
-        background: rgba(237, 243, 236, 1);
-    }
-    .highlight-blue_background {
-        background: rgba(231, 243, 248, 1);
-    }
-    .highlight-purple_background {
-        background: rgba(244, 240, 247, 0.8);
-    }
-    .highlight-pink_background {
-        background: rgba(249, 238, 243, 0.8);
-    }
-    .highlight-red_background {
-        background: rgba(253, 235, 236, 1);
-    }
-    .block-color-default {
-        color: inherit;
-        fill: inherit;
-    }
-    .block-color-gray {
-        color: rgba(120, 119, 116, 1);
-        fill: rgba(120, 119, 116, 1);
-    }
-    .block-color-brown {
-        color: rgba(159, 107, 83, 1);
-        fill: rgba(159, 107, 83, 1);
-    }
-    .block-color-orange {
-        color: rgba(217, 115, 13, 1);
-        fill: rgba(217, 115, 13, 1);
-    }
-    .block-color-yellow {
-        color: rgba(203, 145, 47, 1);
-        fill: rgba(203, 145, 47, 1);
-    }
-    .block-color-teal {
-        color: rgba(68, 131, 97, 1);
-        fill: rgba(68, 131, 97, 1);
-    }
-    .block-color-blue {
-        color: rgba(51, 126, 169, 1);
-        fill: rgba(51, 126, 169, 1);
-    }
-    .block-color-purple {
-        color: rgba(144, 101, 176, 1);
-        fill: rgba(144, 101, 176, 1);
-    }
-    .block-color-pink {
-        color: rgba(193, 76, 138, 1);
-        fill: rgba(193, 76, 138, 1);
-    }
-    .block-color-red {
-        color: rgba(212, 76, 71, 1);
-        fill: rgba(212, 76, 71, 1);
-    }
-    .block-color-gray_background {
-        background: rgba(241, 241, 239, 1);
-    }
-    .block-color-brown_background {
-        background: rgba(244, 238, 238, 1);
-    }
-    .block-color-orange_background {
-        background: rgba(251, 236, 221, 1);
-    }
-    .block-color-yellow_background {
-        background: rgba(251, 243, 219, 1);
-    }
-    .block-color-teal_background {
-        background: rgba(237, 243, 236, 1);
-    }
-    .block-color-blue_background {
-        background: rgba(231, 243, 248, 1);
-    }
-    .block-color-purple_background {
-        background: rgba(244, 240, 247, 0.8);
-    }
-    .block-color-pink_background {
-        background: rgba(249, 238, 243, 0.8);
-    }
-    .block-color-red_background {
-        background: rgba(253, 235, 236, 1);
-    }
-    .select-value-color-interactiveBlue { background-color: rgba(35, 131, 226, .07); }
-    .select-value-color-pink { background-color: rgba(245, 224, 233, 1); }
-    .select-value-color-purple { background-color: rgba(232, 222, 238, 1); }
-    .select-value-color-green { background-color: rgba(219, 237, 219, 1); }
-    .select-value-color-gray { background-color: rgba(227, 226, 224, 1); }
-    .select-value-color-translucentGray { background-color: rgba(255, 255, 255, 0.0375); }
-    .select-value-color-orange { background-color: rgba(250, 222, 201, 1); }
-    .select-value-color-brown { background-color: rgba(238, 224, 218, 1); }
-    .select-value-color-red { background-color: rgba(255, 226, 221, 1); }
-    .select-value-color-yellow { background-color: rgba(253, 236, 200, 1); }
-    .select-value-color-blue { background-color: rgba(211, 229, 239, 1); }
-    .select-value-color-pageGlass { background-color: undefined; }
-    .select-value-color-washGlass { background-color: undefined; }
-    
-    .checkbox {
-        display: inline-flex;
-        vertical-align: text-bottom;
-        width: 16;
-        height: 16;
-        background-size: 16px;
-        margin-left: 2px;
-        margin-right: 5px;
-    }
-    
-    .checkbox-on {
-        background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
-    }
-    
-    .checkbox-off {
-        background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
-    }
-        
-    </style></head><body><article id="936f2d17-28af-4be5-b5ff-f2e83a8aa91b" class="page sans"><header><h1 class="page-title">Alzheimers Severity Detection </h1><p class="page-description"></p><table class="properties"><tbody></tbody></table></header><div class="page-body"><h1 id="5744b3fd-711d-4a19-ba9b-d579390a6b78" class="">Abstract</h1><p id="926788c0-2be4-430a-a13c-0904a712ea8e" class="">Every year there are about 10 million new cases of Alzheimers disease worldwide. The annual cost of Alzheimers is about $1.3 trillion. Figuring out what stage of Alzheimers a patient is in is very important to tailor treatment for a patient. In this paper, I explore a deep-learning based technique for accurately detecting Alzheimer’s stage based on MRI scans of patients. </p><h1 id="45760ae5-de8d-42c9-af72-573d41094873" class="">Background</h1><p id="dcc5f2d9-bb42-4a8f-a704-5eede6d591cf" class="">In a normal functioning human brain, our brain sends signals throughout our bodies using electrical signals. These electrical signals are controlled by the neurons in our brain. There are about 86 billion neurons in a human brain. Neurons communicate with each other using electrical charges. The electrical charges travel through the axon in the neuron. When the signal needs to be transferred to the next neuron, a chemical is released which will then be received by the synapse in the neighboring neuron. The next neuron will then pass the signal forward to other neurons. </p><p id="15c85d13-ad5b-4046-ab0e-95b86d14684c" class="">There are two proteins that are essential for the structure of the neurons. These are beta-amyloid and tau. But in the brain of a patient with Alzheimers, there is an excessive build up of these proteins. Beta-amyloid forms outside the neurons. It clumps together and forms plaque between neurons. Tau tangles up inside the neurons. Both of these inhibit the functionality of neurons. </p><p id="c1b1d698-35eb-4d05-ab83-d699430c2c56" class="">There are specialized brain cells, such as Astrocyte and Microglia, that are used to clean up debris in the brain to ensure that the neurons can perform efficiently. Because of the excessive build up of tau and beta-amyloid, microglia is not able to efficiently clear them up. This causes the brain to go into Chronic Inflammation.</p><p id="b626a60f-293f-4a5f-9c49-f31791ba6b5e" class="">Chronic Inflammation leads to the neurons loosing their ability to communicate. As the nurons start to die out, the brain size starts to shrink. The first part of the brain to start shrinking is the hippocampus. This is the part of the brain responsible for learning and memory. That is why patients with Alzheimers disease generally start with symptoms of memory loss or loss of decision making abilities. </p><h1 id="bbe79644-94bc-4dfd-a6b8-63e1f439555f" class="">Data</h1><p id="e42d45a7-ecde-492e-ba0b-e6c42a8ef70c" class="">The data set that I used for this project is from kaggle. The data set contains MRI scans of over 5,000 patients that range from not having dementia to having moderate dementia. For the deep learning model, I have split the data set into training and testing sets. 80% of the data is in the train set and 20% of the data is in the test set. </p><h2 id="167e263d-0949-42a3-acf0-de0579426f4e" class="">Data Distribution </h2><p id="cd7d42bf-132b-4336-a3f9-805c4f6d6e70" class="">To look at how the data is distributed between the four ranges of dementia, I wrote some code in python to plot the data in a pie chart. In the dataset there are four different categories of dementia severity. The block of code below prints out the number of files in each of the categories. This will give us a good idea of how the data is distributed. The mildpath variable has the path leading to the folder containing all the brain scans of patients will mild dementia. The x variable uses the os.walk function to store all the files that are in mildpath in the variable x as an array. Then in mildlen we find the length of x. We then do the same process for each of the different severities of dementia. </p><pre id="5d7d0722-2968-4ad3-a0af-568ec9a583ec" class="code"><code>mildpath = r&#x27;/kaggle/input/alzheimer-mri-dataset/Dataset/Mild_Demented&#x27;
-    x = next(os.walk(mildpath))
-    mildlen = len(x[2])
-    print(mildlen)
-    moderatepath = r&#x27;/kaggle/input/alzheimer-mri-dataset/Dataset/Moderate_Demented&#x27;
-    x = next(os.walk(moderatepath))
-    moderatelen = len(x[2])
-    print(moderatelen)
-    nonpath = r&#x27;/kaggle/input/alzheimer-mri-dataset/Dataset/Non_Demented&#x27;
-    x = next(os.walk(nonpath))
-    nonlen = len(x)
-    print(nonlen)
-    vmildpath = r&#x27;/kaggle/input/alzheimer-mri-dataset/Dataset/Very_Mild_Demented&#x27;
-    x = next(os.walk(vmildpath))
-    vmildlen = len(x)
-    print(vmildlen)</code></pre><pre id="4528e27b-b736-411c-b60f-359670db6f13" class="code"><code>Output: 
-    896
-    64
-    3200
-    2240</code></pre><p id="d9382b1a-e54b-4794-b0ab-e257af8decb0" class="">Looking at the output we can see that the data is not evenly distributed. There is a lot more MRI scans of people who don’t have dementia and a lot fewer MRI scans of people who have moderate dementia. </p><p id="fcab72d8-ab62-44b4-b6ab-7dedb3c0271e" class="">The code below uses numpy and pyplot to plot the distribution of the data in a pie chart. Looking at how the data is split could later help us determine why our model might not be working how it is expected to, and where we might want to add more data. </p><pre id="a1d2e753-38eb-4b68-b07a-5c8e55ead11e" class="code"><code>pie_chart = np.array([mildlen,moderatelen,nonlen,vmildlen])
-    labels = [&#x27;Mild&#x27;, &#x27;Moderate&#x27;, &#x27;None&#x27;, &#x27;Very Mild&#x27;]
-    
-    fig, ax = plt.subplots(figsize=(6, 6))
-    ax.pie(pie_chart, labels=labels, autopct=&#x27;%.1f%%&#x27;)
-    ax.set_title(&#x27;Severity of Demensia&#x27;)
-    plt.tight_layout()</code></pre><figure id="92cbdad9-9e4c-4b07-98ae-9d32abc40f9f" class="image"><a href="Alzheimers%20Severity%20Detection%20936f2d1728af4be5b5fff2e83a8aa91b/Screenshot_2023-06-25_at_11.37.44_AM.png"><img style="width:384px" src="Alzheimers%20Severity%20Detection%20936f2d1728af4be5b5fff2e83a8aa91b/Screenshot_2023-06-25_at_11.37.44_AM.png"/></a></figure><h2 id="31b0be6d-926e-4082-9ecd-566b8e5051ab" class="">Sample Images</h2><p id="aa974006-59c7-444c-bf30-4a71818683d2" class="">To get a better understanding of the dataset, let’s take a look at some example MRI scans from the dataset. The code below uses imread which is part of the skimage.io library. </p><pre id="2b097308-57bf-4a8a-ad45-98e077a48b67" class="code"><code>nonImg = io.imread(&#x27;/kaggle/input/alzheimer-mri-dataset/Dataset/Non_Demented/non_2.jpg&#x27;)
-    io.imshow(nonImg)
-    
-    vmildImg = io.imread(&#x27;/kaggle/input/alzheimer-mri-dataset/Dataset/Very_Mild_Demented/verymild_2.jpg&#x27;)
-    io.imshow(vmildImg)
-    
-    mildImg = io.imread(&#x27;/kaggle/input/alzheimer-mri-dataset/Dataset/Mild_Demented/mild_2.jpg&#x27;)
-    io.imshow(mildImg)
-    
-    moderateImg = io.imread(&#x27;/kaggle/input/alzheimer-mri-dataset/Dataset/Moderate_Demented/moderate_2.jpg&#x27;)
-    io.imshow(moderateImg)</code></pre><p id="01438d35-495a-450c-af31-e8eb9615120f" class="">nonImg                                                                             vmildImg</p><div id="23013c8b-fb00-441f-bdd3-e9e1151df49e" class="column-list"><div id="4aa2655e-ccbe-4876-9fc2-66accbb3d5cb" style="width:50%" class="column"><figure id="3907ea9f-81df-45af-a631-4059158367e0" class="image"><a href="Alzheimers%20Severity%20Detection%20936f2d1728af4be5b5fff2e83a8aa91b/Screenshot_2023-07-04_at_5.33.36_PM.png"><img style="width:288px" src="Alzheimers%20Severity%20Detection%20936f2d1728af4be5b5fff2e83a8aa91b/Screenshot_2023-07-04_at_5.33.36_PM.png"/></a></figure></div><div id="9169eae9-a8a0-4b0e-8479-505f465df05f" style="width:50%" class="column"><figure id="bee154a9-d5ea-463c-81b6-af802511b506" class="image"><a href="Alzheimers%20Severity%20Detection%20936f2d1728af4be5b5fff2e83a8aa91b/Screenshot_2023-07-04_at_5.33.43_PM.png"><img style="width:288px" src="Alzheimers%20Severity%20Detection%20936f2d1728af4be5b5fff2e83a8aa91b/Screenshot_2023-07-04_at_5.33.43_PM.png"/></a></figure></div></div><p id="d486fe7d-2c95-497a-ae1a-ed34cd8d6cd3" class="">mildImg                                                                            moderateImg</p><div id="e9d67692-07f0-4ffe-a867-7028afee9962" class="column-list"><div id="2e73b0ff-5bba-4e44-b2fc-da9a005cdaa3" style="width:50%" class="column"><figure id="522bb90e-e538-448b-94ae-57277f739aed" class="image" style="text-align:left"><a href="Alzheimers%20Severity%20Detection%20936f2d1728af4be5b5fff2e83a8aa91b/Screenshot_2023-07-04_at_5.33.49_PM.png"><img style="width:336px" src="Alzheimers%20Severity%20Detection%20936f2d1728af4be5b5fff2e83a8aa91b/Screenshot_2023-07-04_at_5.33.49_PM.png"/></a></figure></div><div id="3a9720aa-dbec-4cc5-aab4-4b7e72499a5a" style="width:50%" class="column"><figure id="72f64837-d043-4ae7-8fbc-b38c708e87c8" class="image"><a href="Alzheimers%20Severity%20Detection%20936f2d1728af4be5b5fff2e83a8aa91b/Screenshot_2023-07-04_at_5.33.56_PM.png"><img style="width:1012px" src="Alzheimers%20Severity%20Detection%20936f2d1728af4be5b5fff2e83a8aa91b/Screenshot_2023-07-04_at_5.33.56_PM.png"/></a></figure></div></div><p id="82e81de0-4124-483b-9270-34f79eb53ee7" class="">Here we can see samples of different MRI scans from each severity of Alzheimers. We can see that the ventricular system in the brain is very clearly changing between the different images. Since this is the most proponent change in the images, it is mostly likely what the deep learning model will learn to try to identify other images. </p><h1 id="7097ee79-3332-4d62-9d02-970cb3897768" class="">Approach </h1><h2 id="3b0dfd8f-2549-477b-91e6-f85babec1743" class="">Intro </h2><p id="71ddd5bb-4879-4d67-bbc5-af322d070446" class="">To predict what stage of Alzheimers that a patient is currently in, I trained a deep learning model that was made with keras and resnet50. A deep learning neural network is a machine learning model that is was created using inspiration from the structure of the human brain. The basic premise of a neural network is that is has multiple layers of ‘neurons’ that use information gathered from observing an image to be able to identify similar images. Each layer passes the information on to the next layer after performing specific operations on it. The type of operation performed depends on the type of neural network that is being used. </p><h2 id="fd2bf86f-43d3-4c92-82b3-ce3d94b9357c" class="">Resnet50 architecture &amp; Transfer Learning</h2><p id="54d19c63-0c77-4095-a738-45e32faaba36" class="">The resnet50 model architecture is based on a Convolutional Neural Network. The reason I choose the resnet50 model for Alzheimer severity detection is because Convolutional Neural Networks are often used for image classification. At a high level, Convolutional Neural Networks have four types of layers. These are Convolution layers, Pooling layers, Flattening layers, and Fully-Connected layers. </p><p id="50a39073-4ba6-4247-b65d-b6bb62740ac5" class="">A convolution layer uses a kernel to get an output image. The size of the kernel can be any size, but for an example let’s say 3x3. The center of the kernel will be on the pixel of interest in the image. The value of the pixel in the center will be determined by finding the average of all the pixels directly touching it (because we choose a kernel size of 3x3). This can help the model identify when majors changes occur to the image because the average will be very different than the pixel that it was just on. This can help the model identify the borders of objects in the image. </p><figure id="4b64bd18-b10d-4f5b-9148-aa9f598ac2b6" class="image"><a href="Alzheimers%20Severity%20Detection%20936f2d1728af4be5b5fff2e83a8aa91b/Screenshot_2023-07-04_at_7.27.35_PM.png"><img style="width:2454px" src="Alzheimers%20Severity%20Detection%20936f2d1728af4be5b5fff2e83a8aa91b/Screenshot_2023-07-04_at_7.27.35_PM.png"/></a></figure><p id="8686f7d2-6e95-4e7c-a59e-f1bc8f48851e" class="">The pooling layer also uses a kernel, but has a completely different function. The function of the pooling layer is to reduce the size of an image. There are a few different types of pooling. Max pooling takes the maximum value for the kernel size in a feature map and uses it to create a smaller feature map. Average pooling takes the average of the values in the kernel size and creates a new feature map with the averages. Min pooling takes the minimum value for the kernel size and creates a new feature map using these values. Resnet50 uses one max pooling layer and one average pooling layer. </p><figure id="a037f987-b543-4980-a359-dbac4f5fe1af" class="image"><a href="Alzheimers%20Severity%20Detection%20936f2d1728af4be5b5fff2e83a8aa91b/Screenshot_2023-07-04_at_7.40.47_PM.png"><img style="width:480px" src="Alzheimers%20Severity%20Detection%20936f2d1728af4be5b5fff2e83a8aa91b/Screenshot_2023-07-04_at_7.40.47_PM.png"/></a></figure><figure id="7d27c460-97ed-4169-b963-25abf286657e" class="image"><a href="Alzheimers%20Severity%20Detection%20936f2d1728af4be5b5fff2e83a8aa91b/Screenshot_2023-07-04_at_7.45.23_PM.png"><img style="width:336px" src="Alzheimers%20Severity%20Detection%20936f2d1728af4be5b5fff2e83a8aa91b/Screenshot_2023-07-04_at_7.45.23_PM.png"/></a></figure><p id="29f43566-733c-4301-a249-054c5bfa9af8" class="">Transfer learning is a process that is used in deep learning which allows you to reuse a model that has already been trained on large datasets, to detect images in your data set. The model uses information that it learns from other images, such as curves and edges, to try to identify key features in your dataset. At the end of the model we add some layers which are the only layers training on our dataset. These are the layers whose biases change based on what it learns from the dataset. </p><p id="85c7be45-621e-4929-9f4c-c64dfbe82cf3" class="">The code below is the model that I used for this project. </p><pre id="a930b128-0136-44df-a61b-ba15c11822ca" class="code"><code>height = 128 
-    width = 128 
-    batchSize = 32 
-    dataSet = &#x27;/kaggle/input/alzheimer-mri-dataset/Dataset/&#x27;
-    
-    trainSet = tf.keras.preprocessing.image_dataset_from_directory(dataSet, validation_split=0.2, subset=&#x27;training&#x27;, seed=123, image_size=(height,width), batch_size=batchSize)
-    validationSet = tf.keras.preprocessing.image_dataset_from_directory(dataSet, validation_split=0.2, subset=&#x27;validation&#x27;, seed=123, image_size=(height,width), batch_size=batchSize)
-    
-    model = Sequential()
-    importedModel = tf.keras.applications.ResNet50(include_top=False,input_shape=(180,180,3),pooling=&#x27;avg&#x27;,classes=4,weights=&#x27;imagenet&#x27;)
-    for layer in imported_model.layers:
-        layer.trainable=False
-    
-    model.add(importedModel)
-    model.add(Flatten())
-    model.add(Dense(512, activation=&#x27;relu&#x27;))
-    model.add(Dense(5, activation=&#x27;softmax&#x27;))
-    
-    dnn_model.compile(optimizer=Adam(lr=0.001),loss=&#x27;sparse_categorical_crossentropy&#x27;,metrics=[&#x27;accuracy&#x27;])
-    
-    model = dnn_model.fit(trainSet,validation_data=validationSet,epochs=50)</code></pre><h1 id="f01e8907-4a6c-4548-8e55-d3bae868e1ee" class="">Results</h1><p id="5fc48f68-8db4-4a84-a147-c7ea7e2a36f2" class="">In order to visually see the results of the model we can use TensorBoard. In order to do this we need to add some code before we train the model. This is the code below. </p><pre id="5a270cee-ff75-446a-83e1-e2f16b720200" class="code"><code>%load_ext tensorboard
-    rm -rf ./logs/
-    log_dir = &quot;logs/fit/&quot; + datetime.datetime.now().strftime(&quot;%Y%m%d-%H%M%S&quot;)
-    callbacks = [
-            tf.keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1)
-    ]</code></pre><p id="44d5601b-d5f7-4125-80ca-6ba86cc758f2" class="">We also need to add callbacks to the model. </p><pre id="29cbfcba-95ca-4a6f-bf43-4715a6a0c81f" class="code"><code>model = dnn_model.fit(trainSet,validation_data=validationSet,epochs=50, callbacks=[callbacks])</code></pre><p id="7bf95936-2765-4e5a-8f8a-143a023009b2" class="">Now we can train the model. After the model is done training we can launch TensorBoard to view the results of the code. We can do this with the following code. </p><pre id="bde4d6b5-0f2c-4662-912a-d77c6bd51274" class="code"><code>%tensorboard --logdir logs/fit --port=8008</code></pre><p id="a46a7952-ce69-4c5e-a00e-cf11a7107bb5" class="">
-    </p><figure id="c01c558f-438c-4f0e-b889-a8e5a5cb49a8" class="image"><a href="Alzheimers%20Severity%20Detection%20936f2d1728af4be5b5fff2e83a8aa91b/Screenshot_2023-07-19_at_5.12.51_PM.png"><img style="width:624px" src="Alzheimers%20Severity%20Detection%20936f2d1728af4be5b5fff2e83a8aa91b/Screenshot_2023-07-19_at_5.12.51_PM.png"/></a></figure><figure id="cf6d0d44-96cf-407c-ade3-55f6970a834d" class="image"><a href="Alzheimers%20Severity%20Detection%20936f2d1728af4be5b5fff2e83a8aa91b/Screenshot_2023-07-19_at_5.13.33_PM.png"><img style="width:1124px" src="Alzheimers%20Severity%20Detection%20936f2d1728af4be5b5fff2e83a8aa91b/Screenshot_2023-07-19_at_5.13.33_PM.png"/></a></figure><figure id="b651ae0a-e580-4a10-9850-685c96018b23" class="image"><a href="Alzheimers%20Severity%20Detection%20936f2d1728af4be5b5fff2e83a8aa91b/Screenshot_2023-07-19_at_5.19.54_PM.png"><img style="width:2188px" src="Alzheimers%20Severity%20Detection%20936f2d1728af4be5b5fff2e83a8aa91b/Screenshot_2023-07-19_at_5.19.54_PM.png"/></a></figure><p id="b74a6599-b02e-465e-b0fa-db4a1a44f21b" class="">The first image is the a diagram from TensorBoard that gives us a summary of the model. It isn’t very important, but it is a interesting way to visualize the model. The next graph shows the validation accuracy of the model. The blue line represents the validation set and the orange line represents the train set. As we can see that accuracy on the test set is quite a bit higher than the validation set. We see the same trend in the next graph which shows the loss. The validation loss is much higher than the loss of the test set. The last image was during the models training. It shows the same data as the graphs, but in numerical form. </p><p id="5c7b633f-10e8-4ecd-b8ff-eb43dc64220c" class="">
-    </p><p id="71d9ff81-e532-4279-b136-95f4cb113754" class="">As we can see, the model isn’t perfect. The validation loss ideally should be lower for better accuracy. Some ways we could fix this is increasing the data set, increasing the number of layers, or changing the batch size. Those are just some ideas that could help improve the accuracy of the model. We could even change the type of model to see if other models have better accuracy. </p><p id="cc36079f-cdc9-45b0-9d04-5ae464e8c901" class="">
-    </p><p id="f94a0b51-d653-4b00-a47d-fa136f951788" class="">Using code that I will put below, I was able to get a visual representation of what the model does to each image. We can see how each layer affects an image and what the model is specifically looking for in the images. </p><pre id="322ee09e-8cce-4fbe-b2f5-ace7bcde84a5" class="code"><code>layerNames = [layer.name for layer in imported_model.layers]
-    layerOutputs = [layer.output for layer in imported_model.layers]
-    feature_map_model = tf.keras.models.Model(imported_model.input, layerOutputs)
-    imgPath = r&#x27;/kaggle1/input/alzheimer-mri-dataset/Dataset/Mild_Demented/mild_2.jpg&#x27;
-    img = load_img(imgPath, target_size=(180, 180))  
-    input = img_to_array(img)
-    input = input.reshape((1,) + input.shape)
-    input /= 255.0
-    feature_maps = feature_map_model.predict(input)
-    
-    for layer_name, feature_map in zip(layerNames, feature_maps): 
-         if len(feature_map.shape) == 4:
-            numChannels = feature_map.shape[-1]
-            channelImageSize = feature_map.shape[1]
-            image_belt = np.empty([channelImageSize, numChannels * channelImageSize])
-            for i in range(numChannels):
-                feature_image = feature_map[0, :, :, i]
-                feature_image -= feature_image.mean()
-                feature_image/= feature_image.std ()
-                feature_image*=  64
-                feature_image+= 128
-                feature_image= np.clip(feature_image, 0, 255).astype(&#x27;uint8&#x27;)
-                image_belt[:, i * channelImageSize : (i + 1) * channelImageSize] = feature_image
-    
-            scale = 20. / numChannels
-            plt.figure( figsize=(scale * numChannels, scale) )
-            plt.title ( layer_name )
-            plt.grid  ( False )
-            plt.imshow( image_belt, aspect=&#x27;auto&#x27;)</code></pre><p id="18e1cfad-96de-4e59-b731-0b19509bcfa8" class="">
-    </p></div></article></body></html>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 3px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+    margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-block;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1.25em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(55, 53, 47, 1);
+}
+.highlight-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.highlight-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.highlight-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.highlight-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.highlight-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.highlight-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.highlight-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.highlight-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.highlight-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.highlight-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.highlight-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.highlight-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.highlight-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.highlight-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.highlight-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.block-color-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.block-color-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.block-color-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.block-color-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.block-color-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.block-color-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.block-color-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.block-color-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.block-color-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.block-color-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.block-color-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.block-color-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.select-value-color-interactiveBlue { background-color: rgba(35, 131, 226, .07); }
+.select-value-color-pink { background-color: rgba(245, 224, 233, 1); }
+.select-value-color-purple { background-color: rgba(232, 222, 238, 1); }
+.select-value-color-green { background-color: rgba(219, 237, 219, 1); }
+.select-value-color-gray { background-color: rgba(227, 226, 224, 1); }
+.select-value-color-translucentGray { background-color: rgba(255, 255, 255, 0.0375); }
+.select-value-color-orange { background-color: rgba(250, 222, 201, 1); }
+.select-value-color-brown { background-color: rgba(238, 224, 218, 1); }
+.select-value-color-red { background-color: rgba(255, 226, 221, 1); }
+.select-value-color-yellow { background-color: rgba(253, 236, 200, 1); }
+.select-value-color-blue { background-color: rgba(211, 229, 239, 1); }
+.select-value-color-pageGlass { background-color: undefined; }
+.select-value-color-washGlass { background-color: undefined; }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="936f2d17-28af-4be5-b5ff-f2e83a8aa91b" class="page sans"><header><h1 class="page-title">Alzheimers Severity Detection </h1><p class="page-description"></p><table class="properties"><tbody></tbody></table></header><div class="page-body"><h1 id="5744b3fd-711d-4a19-ba9b-d579390a6b78" class="">Abstract</h1><p id="926788c0-2be4-430a-a13c-0904a712ea8e" class="">Every year there are about 10 million new cases of Alzheimers disease worldwide. The annual cost of Alzheimers is about $1.3 trillion. Figuring out what stage of Alzheimers a patient is in is very important to tailor treatment for a patient. In this paper, I explore a deep-learning based technique for accurately detecting Alzheimer’s stage based on MRI scans of patients. </p><h1 id="45760ae5-de8d-42c9-af72-573d41094873" class="">Background</h1><p id="dcc5f2d9-bb42-4a8f-a704-5eede6d591cf" class="">In a normal functioning human brain, our brain sends signals throughout our bodies using electrical signals. These electrical signals are controlled by the neurons in our brain. There are about 86 billion neurons in a human brain. Neurons communicate with each other using electrical charges. The electrical charges travel through the axon in the neuron. When the signal needs to be transferred to the next neuron, a chemical is released which will then be received by the synapse in the neighboring neuron. The next neuron will then pass the signal forward to other neurons. </p><p id="15c85d13-ad5b-4046-ab0e-95b86d14684c" class="">There are two proteins that are essential for the structure of the neurons. These are beta-amyloid and tau. But in the brain of a patient with Alzheimers, there is an excessive build up of these proteins. Beta-amyloid forms outside the neurons. It clumps together and forms plaque between neurons. Tau tangles up inside the neurons. Both of these inhibit the functionality of neurons. </p><p id="c1b1d698-35eb-4d05-ab83-d699430c2c56" class="">There are specialized brain cells, such as Astrocyte and Microglia, that are used to clean up debris in the brain to ensure that the neurons can perform efficiently. Because of the excessive build up of tau and beta-amyloid, microglia is not able to efficiently clear them up. This causes the brain to go into Chronic Inflammation.</p><p id="b626a60f-293f-4a5f-9c49-f31791ba6b5e" class="">Chronic Inflammation leads to the neurons loosing their ability to communicate. As the nurons start to die out, the brain size starts to shrink. The first part of the brain to start shrinking is the hippocampus. This is the part of the brain responsible for learning and memory. That is why patients with Alzheimers disease generally start with symptoms of memory loss or loss of decision making abilities. </p><h1 id="bbe79644-94bc-4dfd-a6b8-63e1f439555f" class="">Data</h1><p id="e42d45a7-ecde-492e-ba0b-e6c42a8ef70c" class="">The data set that I used for this project is from kaggle. The data set contains MRI scans of over 5,000 patients that range from not having dementia to having moderate dementia. For the deep learning model, I have split the data set into training and testing sets. 80% of the data is in the train set and 20% of the data is in the test set. </p><h2 id="167e263d-0949-42a3-acf0-de0579426f4e" class="">Data Distribution </h2><p id="cd7d42bf-132b-4336-a3f9-805c4f6d6e70" class="">To look at how the data is distributed between the four ranges of dementia, I wrote some code in python to plot the data in a pie chart. In the dataset there are four different categories of dementia severity. The block of code below prints out the number of files in each of the categories. This will give us a good idea of how the data is distributed. The mildpath variable has the path leading to the folder containing all the brain scans of patients will mild dementia. The x variable uses the os.walk function to store all the files that are in mildpath in the variable x as an array. Then in mildlen we find the length of x. We then do the same process for each of the different severities of dementia. </p><pre id="5d7d0722-2968-4ad3-a0af-568ec9a583ec" class="code"><code>mildpath = r&#x27;/kaggle/input/alzheimer-mri-dataset/Dataset/Mild_Demented&#x27;
+x = next(os.walk(mildpath))
+mildlen = len(x[2])
+print(mildlen)
+moderatepath = r&#x27;/kaggle/input/alzheimer-mri-dataset/Dataset/Moderate_Demented&#x27;
+x = next(os.walk(moderatepath))
+moderatelen = len(x[2])
+print(moderatelen)
+nonpath = r&#x27;/kaggle/input/alzheimer-mri-dataset/Dataset/Non_Demented&#x27;
+x = next(os.walk(nonpath))
+nonlen = len(x)
+print(nonlen)
+vmildpath = r&#x27;/kaggle/input/alzheimer-mri-dataset/Dataset/Very_Mild_Demented&#x27;
+x = next(os.walk(vmildpath))
+vmildlen = len(x)
+print(vmildlen)</code></pre><pre id="4528e27b-b736-411c-b60f-359670db6f13" class="code"><code>Output: 
+896
+64
+3200
+2240</code></pre><p id="d9382b1a-e54b-4794-b0ab-e257af8decb0" class="">Looking at the output we can see that the data is not evenly distributed. There is a lot more MRI scans of people who don’t have dementia and a lot fewer MRI scans of people who have moderate dementia. </p><p id="fcab72d8-ab62-44b4-b6ab-7dedb3c0271e" class="">The code below uses numpy and pyplot to plot the distribution of the data in a pie chart. Looking at how the data is split could later help us determine why our model might not be working how it is expected to, and where we might want to add more data. </p><pre id="a1d2e753-38eb-4b68-b07a-5c8e55ead11e" class="code"><code>pie_chart = np.array([mildlen,moderatelen,nonlen,vmildlen])
+labels = [&#x27;Mild&#x27;, &#x27;Moderate&#x27;, &#x27;None&#x27;, &#x27;Very Mild&#x27;]
+
+fig, ax = plt.subplots(figsize=(6, 6))
+ax.pie(pie_chart, labels=labels, autopct=&#x27;%.1f%%&#x27;)
+ax.set_title(&#x27;Severity of Demensia&#x27;)
+plt.tight_layout()</code></pre><figure id="92cbdad9-9e4c-4b07-98ae-9d32abc40f9f" class="image"><a href="Images/Screenshot_2023-06-25_at_11.37.44_AM.png"><img style="width:384px" src="Images/Screenshot_2023-06-25_at_11.37.44_AM.png"/></a></figure><h2 id="31b0be6d-926e-4082-9ecd-566b8e5051ab" class="">Sample Images</h2><p id="aa974006-59c7-444c-bf30-4a71818683d2" class="">To get a better understanding of the dataset, let’s take a look at some example MRI scans from the dataset. The code below uses imread which is part of the skimage.io library. </p><pre id="2b097308-57bf-4a8a-ad45-98e077a48b67" class="code"><code>nonImg = io.imread(&#x27;/kaggle/input/alzheimer-mri-dataset/Dataset/Non_Demented/non_2.jpg&#x27;)
+io.imshow(nonImg)
+
+vmildImg = io.imread(&#x27;/kaggle/input/alzheimer-mri-dataset/Dataset/Very_Mild_Demented/verymild_2.jpg&#x27;)
+io.imshow(vmildImg)
+
+mildImg = io.imread(&#x27;/kaggle/input/alzheimer-mri-dataset/Dataset/Mild_Demented/mild_2.jpg&#x27;)
+io.imshow(mildImg)
+
+moderateImg = io.imread(&#x27;/kaggle/input/alzheimer-mri-dataset/Dataset/Moderate_Demented/moderate_2.jpg&#x27;)
+io.imshow(moderateImg)</code></pre><p id="01438d35-495a-450c-af31-e8eb9615120f" class="">nonImg                                                                             vmildImg</p><div id="23013c8b-fb00-441f-bdd3-e9e1151df49e" class="column-list"><div id="4aa2655e-ccbe-4876-9fc2-66accbb3d5cb" style="width:50%" class="column"><figure id="3907ea9f-81df-45af-a631-4059158367e0" class="image"><a href="Images/Screenshot_2023-07-04_at_5.33.36_PM.png"><img style="width:288px" src="Images/Screenshot_2023-07-04_at_5.33.36_PM.png"/></a></figure></div><div id="9169eae9-a8a0-4b0e-8479-505f465df05f" style="width:50%" class="column"><figure id="bee154a9-d5ea-463c-81b6-af802511b506" class="image"><a href="Images/Screenshot_2023-07-04_at_5.33.43_PM.png"><img style="width:288px" src="Images/Screenshot_2023-07-04_at_5.33.43_PM.png"/></a></figure></div></div><p id="d486fe7d-2c95-497a-ae1a-ed34cd8d6cd3" class="">mildImg                                                                            moderateImg</p><div id="e9d67692-07f0-4ffe-a867-7028afee9962" class="column-list"><div id="2e73b0ff-5bba-4e44-b2fc-da9a005cdaa3" style="width:50%" class="column"><figure id="522bb90e-e538-448b-94ae-57277f739aed" class="image" style="text-align:left"><a href="Images/Screenshot_2023-07-04_at_5.33.49_PM.png"><img style="width:336px" src="Images/Screenshot_2023-07-04_at_5.33.49_PM.png"/></a></figure></div><div id="3a9720aa-dbec-4cc5-aab4-4b7e72499a5a" style="width:50%" class="column"><figure id="72f64837-d043-4ae7-8fbc-b38c708e87c8" class="image"><a href="Images/Screenshot_2023-07-04_at_5.33.56_PM.png"><img style="width:1012px" src="Images/Screenshot_2023-07-04_at_5.33.56_PM.png"/></a></figure></div></div><p id="82e81de0-4124-483b-9270-34f79eb53ee7" class="">Here we can see samples of different MRI scans from each severity of Alzheimers. We can see that the ventricular system in the brain is very clearly changing between the different images. Since this is the most proponent change in the images, it is mostly likely what the deep learning model will learn to try to identify other images. </p><h1 id="7097ee79-3332-4d62-9d02-970cb3897768" class="">Approach </h1><h2 id="3b0dfd8f-2549-477b-91e6-f85babec1743" class="">Intro </h2><p id="71ddd5bb-4879-4d67-bbc5-af322d070446" class="">To predict what stage of Alzheimers that a patient is currently in, I trained a deep learning model that was made with keras and resnet50. A deep learning neural network is a machine learning model that is was created using inspiration from the structure of the human brain. The basic premise of a neural network is that is has multiple layers of ‘neurons’ that use information gathered from observing an image to be able to identify similar images. Each layer passes the information on to the next layer after performing specific operations on it. The type of operation performed depends on the type of neural network that is being used. </p><h2 id="fd2bf86f-43d3-4c92-82b3-ce3d94b9357c" class="">Resnet50 architecture &amp; Transfer Learning</h2><p id="54d19c63-0c77-4095-a738-45e32faaba36" class="">The resnet50 model architecture is based on a Convolutional Neural Network. The reason I choose the resnet50 model for Alzheimer severity detection is because Convolutional Neural Networks are often used for image classification. At a high level, Convolutional Neural Networks have four types of layers. These are Convolution layers, Pooling layers, Flattening layers, and Fully-Connected layers. </p><p id="50a39073-4ba6-4247-b65d-b6bb62740ac5" class="">A convolution layer uses a kernel to get an output image. The size of the kernel can be any size, but for an example let’s say 3x3. The center of the kernel will be on the pixel of interest in the image. The value of the pixel in the center will be determined by finding the average of all the pixels directly touching it (because we choose a kernel size of 3x3). This can help the model identify when majors changes occur to the image because the average will be very different than the pixel that it was just on. This can help the model identify the borders of objects in the image. </p><figure id="4b64bd18-b10d-4f5b-9148-aa9f598ac2b6" class="image"><a href="Images/Screenshot_2023-07-04_at_7.27.35_PM.png"><img style="width:2454px" src="Images/Screenshot_2023-07-04_at_7.27.35_PM.png"/></a></figure><p id="8686f7d2-6e95-4e7c-a59e-f1bc8f48851e" class="">The pooling layer also uses a kernel, but has a completely different function. The function of the pooling layer is to reduce the size of an image. There are a few different types of pooling. Max pooling takes the maximum value for the kernel size in a feature map and uses it to create a smaller feature map. Average pooling takes the average of the values in the kernel size and creates a new feature map with the averages. Min pooling takes the minimum value for the kernel size and creates a new feature map using these values. Resnet50 uses one max pooling layer and one average pooling layer. </p><figure id="a037f987-b543-4980-a359-dbac4f5fe1af" class="image"><a href="Images/Screenshot_2023-07-04_at_7.40.47_PM.png"><img style="width:480px" src="Images/Screenshot_2023-07-04_at_7.40.47_PM.png"/></a></figure><figure id="7d27c460-97ed-4169-b963-25abf286657e" class="image"><a href="Images/Screenshot_2023-07-04_at_7.45.23_PM.png"><img style="width:336px" src="Images/Screenshot_2023-07-04_at_7.45.23_PM.png"/></a></figure><p id="29f43566-733c-4301-a249-054c5bfa9af8" class="">Transfer learning is a process that is used in deep learning which allows you to reuse a model that has already been trained on large datasets, to detect images in your data set. The model uses information that it learns from other images, such as curves and edges, to try to identify key features in your dataset. At the end of the model we add some layers which are the only layers training on our dataset. These are the layers whose biases change based on what it learns from the dataset. </p><p id="85c7be45-621e-4929-9f4c-c64dfbe82cf3" class="">The code below is the model that I used for this project. </p><pre id="a930b128-0136-44df-a61b-ba15c11822ca" class="code"><code>height = 128 
+width = 128 
+batchSize = 32 
+dataSet = &#x27;/kaggle/input/alzheimer-mri-dataset/Dataset/&#x27;
+
+trainSet = tf.keras.preprocessing.image_dataset_from_directory(dataSet, validation_split=0.2, subset=&#x27;training&#x27;, seed=123, image_size=(height,width), batch_size=batchSize)
+validationSet = tf.keras.preprocessing.image_dataset_from_directory(dataSet, validation_split=0.2, subset=&#x27;validation&#x27;, seed=123, image_size=(height,width), batch_size=batchSize)
+
+model = Sequential()
+importedModel = tf.keras.applications.ResNet50(include_top=False,input_shape=(180,180,3),pooling=&#x27;avg&#x27;,classes=4,weights=&#x27;imagenet&#x27;)
+for layer in imported_model.layers:
+    layer.trainable=False
+
+model.add(importedModel)
+model.add(Flatten())
+model.add(Dense(512, activation=&#x27;relu&#x27;))
+model.add(Dense(5, activation=&#x27;softmax&#x27;))
+
+dnn_model.compile(optimizer=Adam(lr=0.001),loss=&#x27;sparse_categorical_crossentropy&#x27;,metrics=[&#x27;accuracy&#x27;])
+
+model = dnn_model.fit(trainSet,validation_data=validationSet,epochs=50)</code></pre><h1 id="f01e8907-4a6c-4548-8e55-d3bae868e1ee" class="">Results</h1><p id="5fc48f68-8db4-4a84-a147-c7ea7e2a36f2" class="">In order to visually see the results of the model we can use TensorBoard. In order to do this we need to add some code before we train the model. This is the code below. </p><pre id="5a270cee-ff75-446a-83e1-e2f16b720200" class="code"><code>%load_ext tensorboard
+rm -rf ./logs/
+log_dir = &quot;logs/fit/&quot; + datetime.datetime.now().strftime(&quot;%Y%m%d-%H%M%S&quot;)
+callbacks = [
+        tf.keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1)
+]</code></pre><p id="44d5601b-d5f7-4125-80ca-6ba86cc758f2" class="">We also need to add callbacks to the model. </p><pre id="29cbfcba-95ca-4a6f-bf43-4715a6a0c81f" class="code"><code>model = dnn_model.fit(trainSet,validation_data=validationSet,epochs=50, callbacks=[callbacks])</code></pre><p id="7bf95936-2765-4e5a-8f8a-143a023009b2" class="">Now we can train the model. After the model is done training we can launch TensorBoard to view the results of the code. We can do this with the following code. </p><pre id="bde4d6b5-0f2c-4662-912a-d77c6bd51274" class="code"><code>%tensorboard --logdir logs/fit --port=8008</code></pre><p id="a46a7952-ce69-4c5e-a00e-cf11a7107bb5" class="">
+</p><figure id="c01c558f-438c-4f0e-b889-a8e5a5cb49a8" class="image"><a href="Images/Screenshot_2023-07-19_at_5.12.51_PM.png"><img style="width:624px" src="Images/Screenshot_2023-07-19_at_5.12.51_PM.png"/></a></figure><figure id="cf6d0d44-96cf-407c-ade3-55f6970a834d" class="image"><a href="Images/Screenshot_2023-07-19_at_5.13.33_PM.png"><img style="width:1124px" src="Images/Screenshot_2023-07-19_at_5.13.33_PM.png"/></a></figure><figure id="b651ae0a-e580-4a10-9850-685c96018b23" class="image"><a href="Images/Screenshot_2023-07-19_at_5.19.54_PM.png"><img style="width:2188px" src="Images/Screenshot_2023-07-19_at_5.19.54_PM.png"/></a></figure><p id="b74a6599-b02e-465e-b0fa-db4a1a44f21b" class="">The first image is the a diagram from TensorBoard that gives us a summary of the model. It isn’t very important, but it is a interesting way to visualize the model. The next graph shows the validation accuracy of the model. The blue line represents the validation set and the orange line represents the train set. As we can see that accuracy on the test set is quite a bit higher than the validation set. We see the same trend in the next graph which shows the loss. The validation loss is much higher than the loss of the test set. The last image was during the models training. It shows the same data as the graphs, but in numerical form. </p><p id="5c7b633f-10e8-4ecd-b8ff-eb43dc64220c" class="">
+</p><p id="71d9ff81-e532-4279-b136-95f4cb113754" class="">As we can see, the model isn’t perfect. The validation loss ideally should be lower for better accuracy. Some ways we could fix this is increasing the data set, increasing the number of layers, or changing the batch size. Those are just some ideas that could help improve the accuracy of the model. We could even change the type of model to see if other models have better accuracy. </p><p id="cc36079f-cdc9-45b0-9d04-5ae464e8c901" class="">
+</p><p id="f94a0b51-d653-4b00-a47d-fa136f951788" class="">Using code that I will put below, I was able to get a visual representation of what the model does to each image. We can see how each layer affects an image and what the model is specifically looking for in the images. </p><pre id="322ee09e-8cce-4fbe-b2f5-ace7bcde84a5" class="code"><code>layerNames = [layer.name for layer in imported_model.layers]
+layerOutputs = [layer.output for layer in imported_model.layers]
+feature_map_model = tf.keras.models.Model(imported_model.input, layerOutputs)
+imgPath = r&#x27;/kaggle1/input/alzheimer-mri-dataset/Dataset/Mild_Demented/mild_2.jpg&#x27;
+img = load_img(imgPath, target_size=(180, 180))  
+input = img_to_array(img)
+input = input.reshape((1,) + input.shape)
+input /= 255.0
+feature_maps = feature_map_model.predict(input)
+
+for layer_name, feature_map in zip(layerNames, feature_maps): 
+     if len(feature_map.shape) == 4:
+        numChannels = feature_map.shape[-1]
+        channelImageSize = feature_map.shape[1]
+        image_belt = np.empty([channelImageSize, numChannels * channelImageSize])
+        for i in range(numChannels):
+            feature_image = feature_map[0, :, :, i]
+            feature_image -= feature_image.mean()
+            feature_image/= feature_image.std ()
+            feature_image*=  64
+            feature_image+= 128
+            feature_image= np.clip(feature_image, 0, 255).astype(&#x27;uint8&#x27;)
+            image_belt[:, i * channelImageSize : (i + 1) * channelImageSize] = feature_image
+
+        scale = 20. / numChannels
+        plt.figure( figsize=(scale * numChannels, scale) )
+        plt.title ( layer_name )
+        plt.grid  ( False )
+        plt.imshow( image_belt, aspect=&#x27;auto&#x27;)</code></pre><p id="18e1cfad-96de-4e59-b731-0b19509bcfa8" class="">
+</p></div></article></body></html>
